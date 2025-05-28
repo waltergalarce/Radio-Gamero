@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RADIO GAMERO 🎮 (con Locutor IA Interactivo)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -53,4 +53,292 @@
         }
         .btn-secondary:hover {
             background-color: #6a0a9a; /* Púrpura más claro al pasar el ratón */
-            border-color:
+            border-color: #00e0ff;
+            box-shadow: 0 0 15px rgba(0, 224, 255, 0.6);
+        }
+        .volume-slider {
+            @apply w-full h-3 rounded-lg appearance-none cursor-pointer;
+            background: #4a0a7a; /* Color de la pista del deslizador */
+            outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            @apply w-5 h-5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full cursor-pointer shadow-md;
+            -webkit-appearance: none;
+            border: 2px solid #00e0ff; /* Borde azul eléctrico */
+        }
+        .volume-slider::-moz-range-thumb {
+            @apply w-5 h-5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full cursor-pointer shadow-md;
+            border: 2px solid #00e0ff;
+        }
+        .loading-indicator {
+            border: 4px solid rgba(255, 255, 255, 0.3); /* Gris claro */
+            border-top: 4px solid #00e0ff; /* Azul eléctrico */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none; /* Oculto por defecto */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message-box {
+            background-color: #1a0a3a; /* Púrpura aún más oscuro para la caja de mensajes */
+            border: 1px solid #e03b8a; /* Borde rosa neón */
+            box-shadow: inset 0 0 10px rgba(224, 59, 138, 0.3); /* Resplandor interior */
+        }
+        .song-info-box {
+            background-color: #1a0a3a;
+            border: 1px solid #00e0ff;
+            box-shadow: inset 0 0 10px rgba(0, 224, 255, 0.3);
+        }
+        .zenofm-player-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Apilar elementos verticalmente */
+            gap: 1rem; /* Espacio entre iframe y enlace */
+        }
+        .zenofm-player-wrapper iframe {
+            max-width: 100%; /* Asegurar que el iframe se ajuste al contenedor */
+            width: 768px; /* Ancho original */
+            height: 300px; /* Altura actualizada */
+            border-radius: 1rem; /* Coincidir con el radio del borde del contenedor */
+            overflow: hidden; /* Ocultar barras de desplazamiento si están presentes */
+            box-shadow: 0 0 20px rgba(0, 224, 255, 0.5); /* Resplandor azul */
+            border: 2px solid #00e0ff; /* Borde azul eléctrico */
+        }
+        .announcer-message-display { /* Clase para la caja de mensajes del locutor */
+            min-height: 200px; /* Altura mínima más grande */
+            width: 100%; /* Ocupa todo el ancho */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        /* Ajustes para el área de entrada del usuario */
+        .user-input-question-area {
+            width: 100%; /* Asegura que ocupe todo el ancho de su padre */
+            margin-top: 1rem; /* Espacio superior */
+        }
+        .user-input-question-area textarea {
+            width: 100%; /* Asegura que la textarea ocupe todo el ancho de su contenedor */
+            padding: 1rem; /* Relleno interno */
+            border-radius: 0.75rem; /* Esquinas redondeadas */
+            background-color: #2d3748; /* Fondo más oscuro */
+            color: #e2e8f0; /* Color del texto */
+            border: 1px solid #6a0a9a; /* Borde púrpura */
+            outline: none; /* Eliminar el contorno al enfocar */
+            min-height: 150px; /* Altura mínima más grande */
+            resize: vertical; /* Permitir redimensionar verticalmente */
+            box-shadow: inset 0 0 8px rgba(138, 0, 255, 0.3); /* Sutil resplandor interior */
+        }
+        .user-input-question-area textarea:focus {
+            border-color: #00e0ff; /* Borde azul eléctrico al enfocar */
+            box-shadow: inset 0 0 12px rgba(0, 224, 255, 0.5); /* Resplandor más intenso al enfocar */
+        }
+        .button-center-container { /* Contenedor para centrar el botón */
+            @apply flex justify-center mt-4;
+        }
+        .button-center-container .btn { /* Ajustar el ancho del botón */
+            width: 256px; /* Ancho fijo para el botón */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-4xl font-bold text-center text-white mb-4 title-glow">RADIO GAMERO 🎮</h1>
+
+        <div class="song-info-box p-6 rounded-xl shadow-inner flex flex-col gap-4">
+            <div class="text-center">
+                <p class="text-xl font-semibold text-gray-100" id="currentSongTitle">Transmisión de RADIO GAMERO</p>
+                <p class="text-md text-gray-300" id="currentSongArtist">¡La música que te acompaña!</p>
+            </div>
+
+            <div class="zenofm-player-wrapper">
+                <iframe id="zenoFmPlayer" src="https://zeno.fm/player/gausradial" width="768" height="300" frameborder="0" scrolling="no"></iframe>
+                <a id="zenoFmLink" href="https://zeno.fm/" target="_blank" style="font-size: 0.9em; line-height: 10px; color: #a0aec0; text-decoration: none;">Una estación de Zeno.FM</a>
+            </div>
+
+            <div class="flex justify-center items-center gap-4">
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7" class="volume-slider hidden">
+            </div>
+        </div>
+
+        <div class="message-box p-6 rounded-xl shadow-inner flex flex-col gap-4">
+            <h2 class="text-2xl font-bold text-center text-white title-glow">Locutor de IA</h2>
+            <div id="announcerMessageBox" class="message-box p-4 rounded-lg text-gray-200 announcer-message-display">
+                ¡Qué onda! Soy tu locutor de IA. Sintoniza RADIO GAMERO, que la buena música no para.
+            </div>
+            <div class="flex justify-center mt-2">
+                <div id="aiLoadingIndicator" class="loading-indicator"></div>
+            </div>
+            
+            <div class="user-input-question-area">
+                <textarea id="userQuestionInput" placeholder="Pregúntale al locutor sobre juegos, streamers, o lo que quieras..."></textarea>
+            </div>
+            <div class="button-center-container">
+                <button id="sendQuestionBtn" class="btn btn-primary">Preguntar al Locutor</button>
+            </div>
+        </div>
+
+        <div id="customModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full text-center border-2 border-pink-500">
+                <p id="modalMessage" class="text-white text-lg mb-4"></p>
+                <button id="modalCloseBtn" class="btn btn-primary">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        // Initialize Firebase variables (provided by the Canvas environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // --- Application Logic ---
+        let announcerTimeout = null;
+
+        // UI Elements - Radio & Announcer (Actualizados para Zeno.FM)
+        const zenoFmPlayer = document.getElementById('zenoFmPlayer');
+        const zenoFmLink = document.getElementById('zenoFmLink');
+        const currentSongTitle = document.getElementById('currentSongTitle');
+        const currentSongArtist = document.getElementById('currentSongArtist');
+        const announcerMessageBox = document.getElementById('announcerMessageBox');
+        const aiLoadingIndicator = document.getElementById('aiLoadingIndicator');
+        const customModal = document.getElementById('customModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+        // New UI Elements for User Interaction with AI
+        const userQuestionInput = document.getElementById('userQuestionInput');
+        const sendQuestionBtn = document.getElementById('sendQuestionBtn');
+
+        /**
+         * Displays a custom modal message instead of alert().
+         * @param {string} message - The message to display.
+         */
+        function showCustomModal(message) {
+            modalMessage.textContent = message;
+            customModal.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the custom modal.
+         */
+        function hideCustomModal() {
+            customModal.classList.add('hidden');
+        }
+
+        /**
+         * Initializes the radio UI.
+         */
+        function initializeRadio() {
+            updateStationDisplay();
+
+            // Event listener for the new user input button
+            sendQuestionBtn.addEventListener('click', sendUserQuestionToAnnouncer);
+            userQuestionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { // Permitir Shift+Enter para nueva línea
+                    e.preventDefault(); // Prevenir el comportamiento predeterminado de Enter (nueva línea)
+                    sendUserQuestionToAnnouncer();
+                }
+            });
+
+            modalCloseBtn.addEventListener('click', hideCustomModal);
+
+            // El locutor habla después de un breve retraso, asumiendo que la radio ya está reproduciendo
+            announcerTimeout = setTimeout(() => announceCurrentStation(), 5000); // 5 segundos
+        }
+
+        /**
+         * Updates the station title and artist displayed on the UI.
+         */
+        function updateStationDisplay() {
+            currentSongTitle.textContent = "RADIO GAMERO";
+            currentSongArtist.textContent = "¡La música que te acompaña!";
+        }
+
+        /**
+         * Sends the user's question to the AI announcer.
+         */
+        async function sendUserQuestionToAnnouncer() {
+            const question = userQuestionInput.value.trim();
+            if (!question) {
+                showCustomModal("No me dejes con la palabra en la boca, ¿eh? Escribe algo.");
+                return;
+            }
+
+            // Construir el prompt para la IA, incluyendo la pregunta del usuario
+            const prompt = `Responde a la siguiente pregunta: "${question}". Recuerda que eres un locutor de radio de música de videojuegos, con una personalidad ruda, experimentada y con un toque latino, como Joel Miller de The Last of Us. Habla de forma concisa y directa. No uses demasiadas florituras. Evita usar el nombre del usuario. Puedes hablar sobre juegos, streamers, noticias de la industria y temas relacionados hasta la actualidad.`;
+            
+            await generateAnnouncerMessage(prompt);
+            userQuestionInput.value = ''; // Limpiar el campo de entrada
+        }
+
+        /**
+         * Generates a message from the AI announcer using the Gemini API.
+         * @param {string} prompt - The prompt to send to the AI.
+         */
+        async function generateAnnouncerMessage(prompt) {
+            announcerMessageBox.textContent = "El locutor de IA está pensando...";
+            aiLoadingIndicator.style.display = 'block';
+            sendQuestionBtn.disabled = true; // Deshabilitar el botón mientras la IA está pensando
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = "AIzaSyBFd-nfa9x7UrqN5hb-ak7PfI6TLIMyFW8"; // <--- ¡TU CLAVE DE API INSERTADA AQUÍ!
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Error de la API: ${response.status} - ${errorData.error.message || 'Desconocido'}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    announcerMessageBox.textContent = text;
+                } else {
+                    announcerMessageBox.textContent = "Lo siento, no pude generar una respuesta en este momento.";
+                    console.warn("Estructura de respuesta inesperada de la API de Gemini:", result);
+                }
+            } catch (error) {
+                console.error("Error al llamar a la API de Gemini:", error);
+                announcerMessageBox.textContent = "¡Ups! Algo salió mal con el locutor. Inténtalo de nuevo más tarde.";
+                showCustomModal(`Error del locutor de IA: ${error.message}`);
+            } finally {
+                aiLoadingIndicator.style.display = 'none';
+                sendQuestionBtn.disabled = false; // Volver a habilitar el botón
+            }
+        }
+
+        /**
+         * Triggers the AI announcer to introduce the current station.
+         */
+        async function announceCurrentStation() {
+            const prompt = `Actúa como un locutor de radio que acaba de presentarse. Saluda a la audiencia de forma ruda pero amigable, y luego anuncia el nombre de la estación: "RADIO GAMERO". Mantén tu tono de Joel Miller. Sé breve y directo. Evita usar el nombre del usuario.`;
+            await generateAnnouncerMessage(prompt);
+        }
+
+        // Initialize the radio when the window loads
+        window.onload = initializeRadio;
+
+    </script>
+</body>
+</html>
