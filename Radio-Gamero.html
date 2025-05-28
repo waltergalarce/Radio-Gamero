@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RADIO GAMERO 🎮 (con Locutor IA Interactivo)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f2a 100%); /* Fondo oscuro estilo synthwave */
+            color: #e2e8f0; /* Texto claro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #2a0a4a; /* Púrpura oscuro para el contenedor */
+            border-radius: 1.5rem; /* Esquinas más redondeadas */
+            box-shadow: 0 0 30px rgba(138, 0, 255, 0.5), 0 0 60px rgba(224, 59, 138, 0.3); /* Resplandor synthwave */
+            max-width: 800px; /* Ancho máximo del contenedor principal */
+            width: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            border: 2px solid #00e0ff; /* Borde azul eléctrico */
+        }
+        .title-glow {
+            text-shadow: 0 0 5px #00e0ff, 0 0 10px #00e0ff, 0 0 15px #e03b8a; /* Resplandor de texto neón */
+        }
+        .btn {
+            @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 ease-in-out shadow-lg;
+            border: 2px solid;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #00e0ff, #8a00ff); /* Gradiente azul a púrpura */
+            @apply text-white border-transparent;
+            box-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #8a00ff, #e03b8a); /* Gradiente púrpura a rosa al pasar el ratón */
+            box-shadow: 0 0 20px rgba(138, 0, 255, 0.7);
+        }
+        .btn-secondary {
+            background-color: #4a0a7a; /* Púrpura más oscuro */
+            @apply text-white border-pink-500;
+            box-shadow: 0 0 10px rgba(224, 59, 138, 0.4);
+        }
+        .btn-secondary:hover {
+            background-color: #6a0a9a; /* Púrpura más claro al pasar el ratón */
+            border-color:
